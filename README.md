@@ -245,14 +245,6 @@ Same as upstream Godot. See [official compilation instructions](https://docs.god
 
 ---
 
-## Documentation
-
-- **Technical Details:** [GPU_DRIVEN_RENDERING_EXTENSION.md](GPU_DRIVEN_RENDERING_EXTENSION.md)
-- **Proposal:** [PROPOSAL_DRAFT.md](PROPOSAL_DRAFT.md)
-- **Class Reference:** See `doc/classes/` for updated XML documentation
-
----
-
 ## Comparison with Other Engines
 
 | Engine | Feature | Implementation |
