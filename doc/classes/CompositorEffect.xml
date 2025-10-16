@@ -20,6 +20,12 @@
 		</method>
 	</methods>
 	<members>
+		<member name="access_draw_list" type="bool" setter="set_access_draw_list" getter="get_access_draw_list" default="false">
+			If [code]true[/code], the effect can access the current DrawList via [method RenderData.get_current_draw_list] in its [method _render_callback].
+			This enables GPU-driven rendering where compute shaders can generate geometry data and render it directly without CPU involvement.
+			[b]Note:[/b] Only available at [constant EFFECT_CALLBACK_TYPE_POST_OPAQUE] and [constant EFFECT_CALLBACK_TYPE_POST_TRANSPARENT] callback stages.
+			[b]Warning:[/b] Misuse of the DrawList can cause rendering artifacts or crashes. Only enable this if you understand the rendering pipeline.
+		</member>
 		<member name="access_resolved_color" type="bool" setter="set_access_resolved_color" getter="get_access_resolved_color">
 			If [code]true[/code] and MSAA is enabled, this will trigger a color buffer resolve before the effect is run.
 			[b]Note:[/b] In [method _render_callback], to access the resolved buffer use:

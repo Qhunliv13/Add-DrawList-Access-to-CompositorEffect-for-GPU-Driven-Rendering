@@ -46,6 +46,13 @@ public:
 
 	virtual RID get_environment() const = 0;
 	virtual RID get_camera_attributes() const = 0;
+
+	// GPU-driven rendering support: Access to current DrawList for CompositorEffects
+	virtual int64_t get_current_draw_list() const { return -1; }
+	virtual RID get_current_framebuffer() const { return RID(); }
+	
+	// Helper function for compute shaders: copy camera matrices to a buffer
+	virtual void copy_camera_matrices_to_buffer(const RID &p_buffer, uint64_t p_offset = 0) const {}
 };
 
 class RenderDataExtension : public RenderData {

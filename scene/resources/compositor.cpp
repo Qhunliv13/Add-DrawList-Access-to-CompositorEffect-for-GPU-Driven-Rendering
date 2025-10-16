@@ -63,6 +63,10 @@ void CompositorEffect::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_needs_separate_specular"), &CompositorEffect::get_needs_separate_specular);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "needs_separate_specular"), "set_needs_separate_specular", "get_needs_separate_specular");
 
+	ClassDB::bind_method(D_METHOD("set_access_draw_list", "enable"), &CompositorEffect::set_access_draw_list);
+	ClassDB::bind_method(D_METHOD("get_access_draw_list"), &CompositorEffect::get_access_draw_list);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "access_draw_list"), "set_access_draw_list", "get_access_draw_list");
+
 	BIND_ENUM_CONSTANT(EFFECT_CALLBACK_TYPE_PRE_OPAQUE)
 	BIND_ENUM_CONSTANT(EFFECT_CALLBACK_TYPE_POST_OPAQUE)
 	BIND_ENUM_CONSTANT(EFFECT_CALLBACK_TYPE_POST_SKY)
@@ -180,6 +184,19 @@ void CompositorEffect::set_needs_separate_specular(bool p_enabled) {
 
 bool CompositorEffect::get_needs_separate_specular() const {
 	return needs_separate_specular;
+}
+
+void CompositorEffect::set_access_draw_list(bool p_enabled) {
+	access_draw_list = p_enabled;
+	if (rid.is_valid()) {
+		RenderingServer *rs = RenderingServer::get_singleton();
+		ERR_FAIL_NULL(rs);
+		rs->compositor_effect_set_flag(rid, RS::CompositorEffectFlags::COMPOSITOR_EFFECT_FLAG_ACCESS_DRAW_LIST, access_draw_list);
+	}
+}
+
+bool CompositorEffect::get_access_draw_list() const {
+	return access_draw_list;
 }
 
 CompositorEffect::CompositorEffect() {

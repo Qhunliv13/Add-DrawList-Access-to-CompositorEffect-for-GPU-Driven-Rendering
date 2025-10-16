@@ -309,6 +309,38 @@ void RendererSceneRenderRD::_process_compositor_effects(RS::CompositorEffectCall
 	Vector<RID> re_rids = comp_storage->compositor_get_compositor_effects(p_render_data->compositor, p_callback_type, true);
 
 	for (RID rid : re_rids) {
+		// Skip effects that need DrawList access
+		if (comp_storage->compositor_effect_get_flag(rid, RS::COMPOSITOR_EFFECT_FLAG_ACCESS_DRAW_LIST)) {
+			continue;
+		}
+		
+		Callable callback = comp_storage->compositor_effect_get_callback(rid);
+		Array arr = { p_callback_type, p_render_data };
+		callback.callv(arr);
+	}
+}
+
+void RendererSceneRenderRD::_process_compositor_effects_with_draw_list(RS::CompositorEffectCallbackType p_callback_type, RenderDataRD *p_render_data) {
+	RendererCompositorStorage *comp_storage = RendererCompositorStorage::get_singleton();
+
+	if (p_render_data->compositor.is_null()) {
+		return;
+	}
+
+	if (p_render_data->reflection_probe.is_valid()) {
+		return;
+	}
+
+	ERR_FAIL_COND(!comp_storage->is_compositor(p_render_data->compositor));
+
+	Vector<RID> re_rids = comp_storage->compositor_get_compositor_effects(p_render_data->compositor, p_callback_type, true);
+
+	for (RID rid : re_rids) {
+		// Only call effects that need DrawList access
+		if (!comp_storage->compositor_effect_get_flag(rid, RS::COMPOSITOR_EFFECT_FLAG_ACCESS_DRAW_LIST)) {
+			continue;
+		}
+		
 		Callable callback = comp_storage->compositor_effect_get_callback(rid);
 		Array arr = { p_callback_type, p_render_data };
 		callback.callv(arr);

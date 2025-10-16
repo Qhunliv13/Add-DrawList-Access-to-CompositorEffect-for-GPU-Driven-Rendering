@@ -10,10 +10,47 @@
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="copy_camera_matrices_to_buffer" qualifiers="const">
+			<return type="void" />
+			<param index="0" name="buffer" type="RID" />
+			<param index="1" name="offset" type="int" default="0" />
+			<description>
+				Helper function for compute shaders to copy camera matrices to a GPU buffer in Godot's standard format.
+				The buffer layout is: projection matrix (64 bytes), inverse projection matrix (64 bytes), inverse view matrix (64 bytes), view matrix (64 bytes). Total size: 256 bytes (64 floats).
+				Use this in combination with [method get_current_draw_list] for GPU-driven rendering.
+				[codeblock]
+				# In CompositorEffect with access_draw_list = true
+				var camera_buffer = rd.uniform_buffer_create(256)
+				render_data.copy_camera_matrices_to_buffer(camera_buffer)
+				[/codeblock]
+			</description>
+		</method>
 		<method name="get_camera_attributes" qualifiers="const">
 			<return type="RID" />
 			<description>
 				Returns the [RID] of the camera attributes object in the [RenderingServer] being used to render this viewport.
+			</description>
+		</method>
+		<method name="get_current_draw_list" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the current active DrawListID if called within a [CompositorEffect] callback that has [member CompositorEffect.access_draw_list] enabled. Returns [code]-1[/code] if not available.
+				This allows compute shaders to generate geometry and render it directly on the GPU without CPU involvement, enabling GPU-driven rendering.
+				[b]Note:[/b] Only available at [constant CompositorEffect.EFFECT_CALLBACK_TYPE_POST_OPAQUE] and [constant CompositorEffect.EFFECT_CALLBACK_TYPE_POST_TRANSPARENT] callback stages.
+				[codeblock]
+				var draw_list = render_data.get_current_draw_list()
+				if draw_list != -1:
+				    var rd = RenderingServer.get_rendering_device()
+				    rd.draw_list_bind_render_pipeline(draw_list, pipeline)
+				    rd.draw_list_draw(draw_list, false, 1, vertex_count)
+				[/codeblock]
+			</description>
+		</method>
+		<method name="get_current_framebuffer" qualifiers="const">
+			<return type="RID" />
+			<description>
+				Returns the current framebuffer [RID] being rendered to. Returns an invalid [RID] if not available.
+				Use this with [method get_current_draw_list] to access the framebuffer format for custom rendering.
 			</description>
 		</method>
 		<method name="get_environment" qualifiers="const">

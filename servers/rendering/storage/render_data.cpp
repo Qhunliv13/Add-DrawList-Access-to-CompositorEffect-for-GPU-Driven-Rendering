@@ -35,6 +35,9 @@ void RenderData::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_render_scene_data"), &RenderData::get_render_scene_data);
 	ClassDB::bind_method(D_METHOD("get_environment"), &RenderData::get_environment);
 	ClassDB::bind_method(D_METHOD("get_camera_attributes"), &RenderData::get_camera_attributes);
+	ClassDB::bind_method(D_METHOD("get_current_draw_list"), &RenderData::get_current_draw_list);
+	ClassDB::bind_method(D_METHOD("get_current_framebuffer"), &RenderData::get_current_framebuffer);
+	ClassDB::bind_method(D_METHOD("copy_camera_matrices_to_buffer", "buffer", "offset"), &RenderData::copy_camera_matrices_to_buffer, DEFVAL(0));
 }
 
 void RenderDataExtension::_bind_methods() {

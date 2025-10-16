@@ -30,6 +30,9 @@
 
 #include "render_data_rd.h"
 
+#include "servers/rendering/renderer_rd/storage_rd/material_storage.h"
+#include "servers/rendering/rendering_device.h"
+
 Ref<RenderSceneBuffers> RenderDataRD::get_render_scene_buffers() const {
 	return render_buffers;
 }
@@ -44,4 +47,26 @@ RID RenderDataRD::get_environment() const {
 
 RID RenderDataRD::get_camera_attributes() const {
 	return camera_attributes;
+}
+
+void RenderDataRD::copy_camera_matrices_to_buffer(const RID &p_buffer, uint64_t p_offset) const {
+	ERR_FAIL_COND(scene_data == nullptr);
+	ERR_FAIL_COND(!p_buffer.is_valid());
+
+	RenderingDevice *rd = RenderingDevice::get_singleton();
+	ERR_FAIL_NULL(rd);
+
+	// Shader Layout: projection(16), inv_projection(16), inv_view(16), view(16) = 64 floats
+	float camera_data[64];
+	
+	Projection projection = scene_data->get_cam_projection();
+	Transform3D cam_transform = scene_data->get_cam_transform();
+	Transform3D view_transform = cam_transform.affine_inverse();
+	
+	RendererRD::MaterialStorage::store_camera(projection, camera_data);
+	RendererRD::MaterialStorage::store_camera(projection.inverse(), camera_data + 16);
+	RendererRD::MaterialStorage::store_transform(cam_transform, camera_data + 32);
+	RendererRD::MaterialStorage::store_transform(view_transform, camera_data + 48);
+
+	rd->buffer_update(p_buffer, p_offset, sizeof(camera_data), camera_data);
 }

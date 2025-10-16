@@ -125,6 +125,7 @@
 #include "tests/scene/test_bit_map.h"
 #include "tests/scene/test_button.h"
 #include "tests/scene/test_camera_2d.h"
+#include "tests/scene/test_compositor_drawlist.h"
 #include "tests/scene/test_control.h"
 #include "tests/scene/test_curve.h"
 #include "tests/scene/test_curve_2d.h"

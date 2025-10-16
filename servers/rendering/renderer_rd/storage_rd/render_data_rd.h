@@ -37,6 +37,10 @@
 class RenderDataRD : public RenderData {
 	GDCLASS(RenderDataRD, RenderData);
 
+private:
+	int64_t current_draw_list = -1;
+	RID current_framebuffer;
+
 public:
 	// Access methods to expose data externally
 	virtual Ref<RenderSceneBuffers> get_render_scene_buffers() const override;
@@ -44,6 +48,13 @@ public:
 
 	virtual RID get_environment() const override;
 	virtual RID get_camera_attributes() const override;
+
+	// GPU-driven rendering support
+	int64_t get_current_draw_list() const override { return current_draw_list; }
+	RID get_current_framebuffer() const override { return current_framebuffer; }
+	void set_current_draw_list(int64_t p_draw_list) { current_draw_list = p_draw_list; }
+	void set_current_framebuffer(RID p_framebuffer) { current_framebuffer = p_framebuffer; }
+	void copy_camera_matrices_to_buffer(const RID &p_buffer, uint64_t p_offset = 0) const override;
 
 	// Members are publicly accessible within the render engine.
 	Ref<RenderSceneBuffersRD> render_buffers;
